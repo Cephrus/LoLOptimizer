@@ -1,4 +1,7 @@
-package github.cephrus.optimizer.lol.champion;
+package github.cephrus.optimizer.lol.info;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.ListView;
 
 public class Champion
 {
