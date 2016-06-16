@@ -1,11 +1,13 @@
 package github.cephrus.optimizer.lol.info;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Champion
 {
-	/** I'll fill in the rest later */
+	private static final Map<String, Champion> champByName = new HashMap<String, Champion>();
+	
+	/** I'll fill in the rest later *//*
 	public static final Champion championAatrox = new Champion("Aatrox");
 	public static final Champion championAhri = new Champion("Ahri");
 	public static final Champion championAkali = new Champion("Akali");
@@ -44,15 +46,32 @@ public class Champion
 	public static final Champion championHeimer = new Champion("Heimerdinger");
 	public static final Champion championIllaoi = new Champion("Illaoi");
 	public static final Champion championIrelia = new Champion("Irelia");
-	public static final Champion championJanna = new Champion("Janna");
+	public static final Champion championJanna = new Champion("Janna");*/
 	
 	public Champion(String name)
 	{
-		
+		this.name = name;
+		champByName.put(name, this);
+	}
+	
+	public Champion(String name, int id)
+	{
+		this(name);
+		this.id = id;
+	}
+	
+	public String name;
+	public int id;
+	public StatInfo info;
+	
+	public Champion setInfo(StatInfo stats)
+	{
+		this.info = stats;
+		return this;
 	}
 	
 	public static Champion fromName(String championName)
 	{
-		return new Champion(championName);
+		return champByName.get(championName);
 	}
 }
