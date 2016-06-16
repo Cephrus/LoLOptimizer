@@ -1,6 +1,5 @@
 package github.cephrus.optimizer;
 
-import github.cephrus.optimizer.gui.GuiLoader;
 import github.cephrus.optimizer.gui.GuiMain;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -18,7 +17,6 @@ public class LoLOptimizer extends Application
 	@Override
 	public void start(Stage primaryStage)
 	{
-		new GuiLoader();
 		try
 		{
 			AnchorPane pane = FXMLLoader.load(GuiMain.class.getResource("Main.fxml"));

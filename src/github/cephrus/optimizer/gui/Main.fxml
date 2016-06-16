@@ -25,11 +25,12 @@
             </Text>
          </children>
       </Pane>
-      <Pane fx:id="mChampInfo" layoutX="200.0" prefHeight="394.0" prefWidth="403.0">
+      <Pane fx:id="mChampInfo" layoutX="200.0" prefHeight="394.0" prefWidth="403.0" visible="false">
          <children>
             <ScrollPane layoutY="197.0" prefHeight="200.0" prefWidth="403.0" />
             <TextField layoutX="240.0" layoutY="172.0" promptText="Search" />
          </children>
       </Pane>
+      <Pane fx:id="mOptimizer" layoutX="200.0" prefHeight="400.0" prefWidth="403.0" />
    </children>
 </AnchorPane>
