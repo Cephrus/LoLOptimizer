@@ -5,43 +5,46 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Scanner;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 @SuppressWarnings("resource")
 public class APIHelper
-{	
+{
 	private static final String apiKey = "[REDACTED]";
-	
+
 	public static StatInfo getChampionInformation(String champName)
 	{
 		try
 		{
 			Champion champ = Champion.fromName(champName);
-			InputStream stream = new URL("https://global.api.pvp.net/api/lol/static-data/na/v1.2/champion/" + champ.id + "?champData=stats&api_key=" + apiKey).openStream();
+			InputStream stream = new URL("https://global.api.pvp.net/api/lol/static-data/na/v1.2/champion/" + champ.id + "?champData=skins,stats&api_key=" + apiKey).openStream();
 			Scanner scn = new Scanner(stream).useDelimiter("\\A");
-			JSONObject obj = new JSONObject(scn.next()).getJSONObject("stats");
-			
+			JSONObject base = new JSONObject(scn.next());
+			JSONObject obj = base.getJSONObject("stats");
+
 			StatInfo info = new StatInfo(StatInfo.StatType.CHAMPION);
-			
+
 			Iterator<String> statKeys = obj.keys();
 			while(statKeys.hasNext())
 			{
 				String key = statKeys.next();
 				info.addStat(key, obj.get(key));
-				
-				System.out.println(key + ":" + obj.get(key));
 			}
-			
+
+			JSONArray skins = base.getJSONArray("skins");
+			champ.maxSkins = skins.length();
+
 			stream.close();
 			scn.close();
-			
+
 			return info;
 		}
 		catch(Exception e) {e.printStackTrace();}
 		return null;
 	}
 
-	
+
 	static
 	{
 		try
@@ -50,7 +53,7 @@ public class APIHelper
 
 			Scanner scn = new Scanner(stream).useDelimiter("\\A");
 			JSONObject championData = new JSONObject(scn.next()).getJSONObject("keys");
-			
+
 			int offset = championData.length();
 			for(int i = 1; i < offset; i++)
 			{
@@ -59,11 +62,11 @@ public class APIHelper
 					offset++;
 					continue;
 				}
-				
+
 				String s = (String) championData.get("" + i);
 				new Champion(s, i);
 			}
-			
+
 			stream.close();
 			scn.close();
 		}
@@ -72,7 +75,5 @@ public class APIHelper
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		APIHelper.getChampionInformation("Kalista");
 	}
 }

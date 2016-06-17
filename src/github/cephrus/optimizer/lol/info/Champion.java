@@ -2,6 +2,7 @@ package github.cephrus.optimizer.lol.info;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class Champion
 {
@@ -63,9 +64,22 @@ public class Champion
 	public String name;
 	public int id;
 	public StatInfo info;
+	public int maxSkins;
+	
+	public static Champion random()
+	{
+		Random rand = new Random();
+		return ((Champion)champByName.values().toArray()[rand.nextInt(champByName.values().toArray().length)]);
+	}
+	
+	public int randomSkin()
+	{
+		Random rand = new Random();
+		return rand.nextInt(maxSkins) + 1;
+	}
 	
 	public Champion setInfo(StatInfo stats)
-	{
+	{	
 		this.info = stats;
 		return this;
 	}
