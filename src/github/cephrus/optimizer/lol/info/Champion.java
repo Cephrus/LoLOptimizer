@@ -69,6 +69,7 @@ public class Champion
 	public static Champion random()
 	{
 		Random rand = new Random();
+		if(champByName.values().toArray().length < 1) return null;
 		return ((Champion)champByName.values().toArray()[rand.nextInt(champByName.values().toArray().length)]);
 	}
 	
