@@ -17,6 +17,11 @@ public class APIHelper
 
 	private static final String apiKey = "[REDACTED]";
 
+	public static void injectItemData(Item i)
+	{
+
+	}
+
 	public static void updateChampionInformation()
 	{
 		int index = 0;
@@ -31,7 +36,7 @@ public class APIHelper
 				JSONObject base;
 				if(!file.exists())
 				{
-					InputStream stream = new URL("https://global.api.pvp.net/api/lol/static-data/na/v1.2/champion/" + champ.id + "?champData=skins,stats&api_key=" + apiKey).openStream();
+					InputStream stream = new URL("https://global.api.pvp.net/api/lol/static-data/na/v1.2/champion/" + champ.id + "?champData=skins,stats,tags&api_key=" + apiKey).openStream();
 					Scanner scn = new Scanner(stream).useDelimiter("\\A");
 					base = new JSONObject(scn.next());
 
@@ -63,8 +68,13 @@ public class APIHelper
 					info.addStat(key, obj.get(key));
 				}
 
+				champ.displayName = base.getString("name");
+
 				JSONArray skins = base.getJSONArray("skins");
 				champ.maxSkins = skins.length();
+
+				JSONArray tags = base.getJSONArray("tags");
+				champ.tag = (String)tags.get(0);
 
 				index++;
 			}

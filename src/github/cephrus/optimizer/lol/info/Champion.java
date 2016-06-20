@@ -2,6 +2,7 @@ package github.cephrus.optimizer.lol.info;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -50,6 +51,8 @@ public class Champion
 	public static final Champion championIrelia = new Champion("Irelia");
 	public static final Champion championJanna = new Champion("Janna");*/
 	
+	public static final List<String> tags = Arrays.asList("assassin", "fighter", "tank", "mage", "marksman", "support");
+	
 	public Champion(String name)
 	{
 		this.name = name;
@@ -63,6 +66,8 @@ public class Champion
 	}
 	
 	public String name;
+	public String displayName;
+	public String tag;
 	public int id;
 	public StatInfo info;
 	public int maxSkins;

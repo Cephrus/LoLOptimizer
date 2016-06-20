@@ -20,6 +20,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
@@ -29,8 +30,13 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
@@ -83,7 +89,23 @@ public class GuiMain implements Initializable
 	
 	@FXML
 	private TextField mCISearchBox;
+	
+	@FXML
+	private Pane mBorder;
+	
+	@FXML
+	private Label mChampName;
 
+	public void setChampInfo(Champion c)
+	{
+		this.mChampName.setText(c.displayName);
+		ImageView img = new ImageView(new Image("http://ddragon.leagueoflegends.com/cdn/img/champion/loading/" + c.name + "_0.jpg"));
+		img.setPreserveRatio(true);
+		img.setFitHeight(240);
+		img.setFitWidth(120);
+		this.mBorder.getChildren().add(img);
+	}
+	
 	public void initialize(URL url, ResourceBundle bundl)
 	{
 		GuiPage pageAbout = new GuiPage("About", mPaneAbout);
@@ -119,28 +141,26 @@ public class GuiMain implements Initializable
 		mChampInfoScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
 		List<Button> btns = new ArrayList<Button>();
+		Map<Champion, Button> champButtons = new HashMap<Champion, Button>();
 		Map<Champion, Image> art = new HashMap<Champion, Image>();
 		mCISearchBox.textProperty().addListener((obsrv, oldVal, newVal) ->
 		{
 			GuiMain.this.mChampInfoPane.getChildren().clear();
 			btns.clear();
-			System.out.println(newVal.length());
 			
 			for(Champion c : Champion.byAlpha())
 			{
-				if(!c.name.toLowerCase().contains(newVal.toLowerCase()) && !newVal.isEmpty()) continue;
+				if(Champion.tags.contains(newVal.toLowerCase()) && !c.tag.equalsIgnoreCase(newVal)) continue;
+				else if(!c.tag.equalsIgnoreCase(newVal) && !c.displayName.toLowerCase().contains(newVal.toLowerCase()) && !newVal.isEmpty()) continue;
 				
 				ImageView iv = new ImageView(art.get(c));
 	        	iv.setPreserveRatio(true);
 	        	iv.setFitHeight(50);
 	        	iv.setFitWidth(50);
-	        	Button btn = new Button();
-	        	btn.setTooltip(new Tooltip(c.name));
-	        	btn.setGraphic(iv);
-	        	VBox v = new VBox(btn);
+	        	VBox v = new VBox(champButtons.get(c));
 	        	HBox b = new HBox(v);
 	        	mChampInfoPane.getChildren().add(b);
-	        	btns.add(btn);
+	        	btns.add(champButtons.get(c));
 			}
 		});
 		
@@ -152,13 +172,24 @@ public class GuiMain implements Initializable
         	iv.setPreserveRatio(true);
         	iv.setFitHeight(50);
         	iv.setFitWidth(50);
+        	
         	Button btn = new Button();
-        	btn.setTooltip(new Tooltip(c.name));
+        	btn.setTooltip(new Tooltip(c.displayName));
         	btn.setGraphic(iv);
+        	btn.setOnAction(new EventHandler<ActionEvent>()
+        	{
+        		@Override
+        		public void handle(ActionEvent e)
+        		{
+        			GuiMain.this.setChampInfo(c);
+        		}
+        	});
+        	
         	VBox v = new VBox(btn);
         	HBox b = new HBox(v);
         	mChampInfoPane.getChildren().add(b);
         	btns.add(btn);
+        	champButtons.put(c, btn);
         }
 		
 		ObservableList list = FXCollections.observableArrayList();
