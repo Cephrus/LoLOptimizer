@@ -35,8 +35,8 @@ public class LoLOptimizer extends Application
 		new APIHelper();
 		try
 		{
+			APIHelper.updateChampionInformation();
 			Champion splash = Champion.random();
-			if(splash != null) APIHelper.getChampionInformation(splash.name);
 			
 			if(splash != null) LoLOptimizer.splash = new BackgroundImage(new Image("http://ddragon.leagueoflegends.com/cdn/img/champion/splash/" + splash.name + "_" + splash.randomSkin() + ".jpg"), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
 			AnchorPane pane = FXMLLoader.load(GuiMain.class.getResource("Main.fxml"));

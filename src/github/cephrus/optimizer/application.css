@@ -15,3 +15,7 @@
 .list-view {
 	-fx-background-color: transparent ;
 }
+
+#mBlur2 {
+	-fx-background-color : rgba(0, 0, 0, 0.2) ;
+}

@@ -1,23 +1,39 @@
 package github.cephrus.optimizer.gui;
 
+import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import github.cephrus.optimizer.LoLOptimizer;
+import github.cephrus.optimizer.lol.info.APIHelper;
+import github.cephrus.optimizer.lol.info.Champion;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -30,6 +46,15 @@ public class GuiMain implements Initializable
 	private ListView<GuiPage> mListView;
 
 	@FXML
+	private Text mTitle;
+	
+	@FXML
+	private AnchorPane anchor;
+	
+	@FXML
+	private Text mTitle2;
+	
+	@FXML
 	private Pane mPaneAbout;
 
 	@FXML
@@ -40,19 +65,104 @@ public class GuiMain implements Initializable
 	
 	@FXML
 	private Pane mBlurLayer;
+	
+	@FXML
+	private Pane mSettings;
+	
+	@FXML
+	private Button mReloadBtn;
+	
+	@FXML
+	private Pane mBlur2;
+	
+	@FXML
+	private TilePane mChampInfoPane;
+	
+	@FXML
+	private ScrollPane mChampInfoScroll;
+	
+	@FXML
+	private TextField mCISearchBox;
 
 	public void initialize(URL url, ResourceBundle bundl)
 	{
 		GuiPage pageAbout = new GuiPage("About", mPaneAbout);
 		GuiPage pageInfo = new GuiPage("Champion Information", mChampInfo);
 		GuiPage pageOptimizer = new GuiPage("Item Optimizer", mOptimizer);
+		GuiPage pageSettings = new GuiPage("Settings", mSettings);
+		
+		DropShadow shad = new DropShadow();
+		shad.setOffsetX(1.8);
+		shad.setOffsetY(1.8);
+		mTitle.setEffect(shad);
+		mTitle2.setEffect(shad);
+		
+		mReloadBtn.setOnAction(new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle(ActionEvent arg0)
+			{
+				new File(APIHelper.dataDir + File.separator + "championids.json").delete();
+				for(File f : new File(APIHelper.dataDir + File.separator + "champions").listFiles())
+				{
+					f.delete();
+				}
+				new APIHelper();
+				APIHelper.updateChampionInformation();
+			}
+		});
 		
 		mBlurLayer.setBackground(new Background(LoLOptimizer.splash));
 		mBlurLayer.setEffect(new GaussianBlur());
 		
+		mChampInfoScroll.setFitToWidth(true);
+		mChampInfoScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+		List<Button> btns = new ArrayList<Button>();
+		Map<Champion, Image> art = new HashMap<Champion, Image>();
+		mCISearchBox.textProperty().addListener((obsrv, oldVal, newVal) ->
+		{
+			GuiMain.this.mChampInfoPane.getChildren().clear();
+			btns.clear();
+			System.out.println(newVal.length());
+			
+			for(Champion c : Champion.byAlpha())
+			{
+				if(!c.name.toLowerCase().contains(newVal.toLowerCase()) && !newVal.isEmpty()) continue;
+				
+				ImageView iv = new ImageView(art.get(c));
+	        	iv.setPreserveRatio(true);
+	        	iv.setFitHeight(50);
+	        	iv.setFitWidth(50);
+	        	Button btn = new Button();
+	        	btn.setTooltip(new Tooltip(c.name));
+	        	btn.setGraphic(iv);
+	        	VBox v = new VBox(btn);
+	        	HBox b = new HBox(v);
+	        	mChampInfoPane.getChildren().add(b);
+	        	btns.add(btn);
+			}
+		});
+		
+        for(Champion c : Champion.byAlpha()) 
+        {
+        	Image i = new Image("http://ddragon.leagueoflegends.com/cdn/6.12.1/img/champion/" + c.name + ".png");
+        	art.put(c, i);
+        	ImageView iv = new ImageView(i);
+        	iv.setPreserveRatio(true);
+        	iv.setFitHeight(50);
+        	iv.setFitWidth(50);
+        	Button btn = new Button();
+        	btn.setTooltip(new Tooltip(c.name));
+        	btn.setGraphic(iv);
+        	VBox v = new VBox(btn);
+        	HBox b = new HBox(v);
+        	mChampInfoPane.getChildren().add(b);
+        	btns.add(btn);
+        }
+		
 		ObservableList list = FXCollections.observableArrayList();
 		list.addAll(GuiPage.mainPages.toArray());
-	//	list.addAll("About", "Champion Information", "Item Optimizer");
 		mListView.setItems(list);
 		mListView.getSelectionModel().select(0);
 

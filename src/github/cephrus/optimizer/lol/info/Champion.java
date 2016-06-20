@@ -1,5 +1,6 @@
 package github.cephrus.optimizer.lol.info;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -65,6 +66,30 @@ public class Champion
 	public int id;
 	public StatInfo info;
 	public int maxSkins;
+	
+	public static Champion[] byAlpha()
+	{
+		Champion[] champs = champions();
+		String[] names = new String[champs.length];
+		for(int i = 0; i < champs.length; i++)
+		{
+			names[i] = champs[i].name;
+		}
+		Arrays.sort(names);
+		Champion[] retn = new Champion[champs.length];
+		
+		for(int i = 0; i < champs.length; i++)
+		{
+			retn[i] = Champion.fromName(names[i]);
+		}
+		
+		return retn;
+	}
+	
+	public static Champion[] champions()
+	{
+		return (Champion[])champByName.values().toArray(new Champion[champByName.size()]);
+	}
 	
 	public static Champion random()
 	{
