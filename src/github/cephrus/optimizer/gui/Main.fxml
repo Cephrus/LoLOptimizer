@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
@@ -35,7 +36,8 @@
             <Pane fx:id="mBlur2" layoutX="4.0" layoutY="43.0" prefHeight="253.0" prefWidth="807.0">
                <children>
                   <Pane fx:id="mBorder" layoutX="28.0" layoutY="14.0" prefHeight="204.0" prefWidth="200.0" />
-                  <Label fx:id="mChampName" layoutX="28.0" layoutY="231.0" text="kk" textFill="WHITE" />
+                  <Label fx:id="mChampName" layoutX="28.0" layoutY="231.0" text="Please Select a Champion" textFill="WHITE" />
+                  <ComboBox fx:id="mCILevel" layoutX="228.0" layoutY="14.0" prefHeight="25.0" prefWidth="72.0" promptText="Level" />
                </children></Pane>
             <ScrollPane fx:id="mChampInfoScroll" layoutX="4.0" layoutY="397.0" prefHeight="253.0" prefWidth="832.0">
                <content>
