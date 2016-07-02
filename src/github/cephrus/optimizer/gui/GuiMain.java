@@ -11,6 +11,8 @@ import java.util.ResourceBundle;
 import github.cephrus.optimizer.LoLOptimizer;
 import github.cephrus.optimizer.lol.info.APIHelper;
 import github.cephrus.optimizer.lol.info.Champion;
+import github.cephrus.optimizer.lol.info.SpellHandler;
+import github.cephrus.optimizer.lol.info.StatInfo;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -22,9 +24,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
@@ -34,10 +38,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 
@@ -94,15 +100,125 @@ public class GuiMain implements Initializable
 	
 	@FXML
 	private ComboBox mCILevel;
+	
+	@FXML
+	private Label mCI1, mCI2, mCI3, mCI4, mCI5, mCI6, mCI7, mCI8, mCI9, mCI0, mCIRes, mCIResGen;
+	
+	@FXML
+	private AnchorPane mBlurI, mBlurQ, mBlurW, mBlurE, mBlurR;
+	
+	@FXML
+	private TextArea mWeb, mWeb1, mWeb2, mWeb3, mWeb4;
+	
+	private Champion selected;
 
 	public void setChampInfo(Champion c)
 	{
 		this.mChampName.setText(c.displayName);
-		ImageView img = new ImageView(new Image("http://ddragon.leagueoflegends.com/cdn/img/champion/loading/" + c.name + "_0.jpg"));
+		ImageView img = new ImageView(new Image(APIHelper.getSplash(c, 0)));
 		img.setPreserveRatio(true);
 		img.setFitHeight(240);
 		img.setFitWidth(120);
 		this.mBorder.getChildren().add(img);
+		
+		StatInfo stats = c.info;
+		String lvl = (String)this.mCILevel.getSelectionModel().getSelectedItem();
+		
+		this.mCI1.setText(c.getHealth(lvl));
+		this.mCI2.setText(c.getRegen(lvl));
+		this.mCIRes.setText(APIHelper.getLocalization(c.resource));
+		this.mCIResGen.setText(c.resource.equalsIgnoreCase("MP") ? "Mana Regen" : 
+			c.resource.equalsIgnoreCase("energy") ? "Energy Regen" : "");
+		this.mCI3.setText(c.getResource(lvl));
+		this.mCI4.setText(c.getResourceGen(lvl));
+		this.mCI5.setText(c.getRange());
+		this.mCI6.setText(c.getBaseAttackDamage(lvl));
+		this.mCI7.setText(c.getAttackSpeed(lvl));
+		this.mCI8.setText(c.getArmor(lvl));
+		this.mCI9.setText(c.getMagicResist(lvl));
+		this.mCI0.setText(c.getMS());
+		
+		//TODO passive
+		mWeb1.setText(formatAbility(c, 0));
+		mWeb2.setText(formatAbility(c, 1));
+		mWeb3.setText(formatAbility(c, 2));
+		mWeb4.setText(formatAbility(c, 3));
+		
+		this.selected = c;
+	}
+	
+	public VBox formBeta(Champion c, int i)
+	{
+		VBox v = new VBox();
+		HBox box = new HBox();
+		box.setSpacing(0);
+		String[] description = SpellHandler.getAbility(c, i).description.split("<|\\>");
+		
+		Color paint = Color.WHITE;
+		for(String s : description)
+		{
+			if(s.equals("br"))
+			{
+				HBox imm = box;
+				v.getChildren().add(imm);
+				box = new HBox();
+				box.setSpacing(0);
+			}
+			else if(s.contains("span class=\""))
+			{
+				String q = s.split("\"")[1].substring(5);
+				paint = (Color) Paint.valueOf(q);
+				System.out.println(q);
+				System.out.println(paint.getBlue());
+				System.out.println(paint.getRed());
+				System.out.println(paint.getGreen());
+				System.out.println();
+			}
+			else if(s.equals("/span"))
+			{
+				paint = Color.WHITE;
+			}
+			else
+			{
+				Label l = new Label(s);
+				l.setTextFill(paint == Color.WHITE ? Color.WHITE : Color.BLUE);
+				box.getChildren().add(l);
+			}
+		}
+		
+		return v;
+	}
+	
+	public String formatAbility(Champion champ, int index)
+	{
+		String description = index == -1 ? SpellHandler.getPassive(champ).description : 
+			SpellHandler.getAbility(champ, index).description;
+		StringBuilder builder = new StringBuilder();
+		
+		String[] s = description.split("<|\\>");
+		for(String str : s)
+		{
+			if(str.contains("span")) continue;
+			if(str.equals("br")) builder.append("\n");
+			else
+			{
+				char[] a = str.toCharArray();
+				int counter = 0;
+				for(int i = 0; i < a.length; i++)
+				{
+					counter++;
+					if(counter >= 30 && a[i] == ' ')
+					{
+						builder.append("\n");
+						counter = 0;
+					}
+					
+					builder.append(a[i]);
+				}
+			}
+		}
+		
+		return builder.toString();
 	}
 	
 	public void initialize(URL url, ResourceBundle bundl)
@@ -123,11 +239,8 @@ public class GuiMain implements Initializable
 			@Override
 			public void handle(ActionEvent arg0)
 			{
-				new File(APIHelper.dataDir + File.separator + "championids.json").delete();
-				for(File f : new File(APIHelper.dataDir + File.separator + "champions").listFiles())
-				{
-					f.delete();
-				}
+				new File(APIHelper.dataDir + File.separator + "apiver").delete();
+				APIHelper.queueUpdate = true;
 				new APIHelper();
 				APIHelper.updateChampionInformation();
 			}
@@ -165,7 +278,7 @@ public class GuiMain implements Initializable
 		
         for(Champion c : Champion.byAlpha()) 
         {
-        	Image i = new Image("http://ddragon.leagueoflegends.com/cdn/6.12.1/img/champion/" + c.name + ".png");
+        	Image i = new Image(APIHelper.getChampIcon(c));
         	art.put(c, i);
         	ImageView iv = new ImageView(i);
         	iv.setPreserveRatio(true);
@@ -232,16 +345,53 @@ public class GuiMain implements Initializable
 					((GuiPage)arg1).panel.setVisible(false);
 					((GuiPage)arg2).panel.setVisible(true);
 				}
-				
-				/*if(GuiPage.forName((String)arg1) != null && GuiPage.forName((String) arg2) != null)
-				{
-					GuiPage.forName((String)arg1).panel.setVisible(false);
-					GuiPage.forName((String)arg2).panel.setVisible(true);
-				}*/
 			}
 		});
 		
-		mCILevel.setEditable(true);
-		mCILevel.setItems(FXCollections.observableArrayList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18));
+		mCILevel.setStyle("-fx-text-fill : white ;");
+		mCILevel.getSelectionModel().select("1-18");
+		mCILevel.setCellFactory(new Callback<ListView<String>, ListCell<String>>()
+		{
+			@Override
+			public ListCell<String> call(ListView<String> arg0)
+			{
+				return new ListCell<String>()
+				{
+					@Override
+					public void updateItem(String item, boolean empty)
+					{
+						super.updateItem(item, empty);
+						this.setText(item);
+						this.setTextFill(Color.WHITE);
+					}
+				};
+			}		
+		});
+		mCILevel.setItems(FXCollections.observableArrayList("1-18", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"));
+		mCILevel.valueProperty().addListener((obsrv, oldV, newV) ->
+		{
+			if(newV instanceof String)
+			{
+				// I'm lazy
+				Champion c = selected;
+				String lvl = (String)newV;
+				
+				if(c == null) return;
+				
+				this.mCI1.setText(c.getHealth(lvl));
+				this.mCI2.setText(c.getRegen(lvl));
+				this.mCIRes.setText(APIHelper.getLocalization(c.resource));
+				this.mCIResGen.setText(c.resource.equalsIgnoreCase("MP") ? "Mana Regen" : 
+					c.resource.equalsIgnoreCase("energy") ? "Energy Regen" : "");
+				this.mCI3.setText(c.getResource(lvl));
+				this.mCI4.setText(c.getResourceGen(lvl));
+				this.mCI5.setText(c.getRange());
+				this.mCI6.setText(c.getBaseAttackDamage(lvl));
+				this.mCI7.setText(c.getAttackSpeed(lvl));
+				this.mCI8.setText(c.getArmor(lvl));
+				this.mCI9.setText(c.getMagicResist(lvl));
+				this.mCI0.setText(c.getMS());
+			}
+		});
 	}
 }

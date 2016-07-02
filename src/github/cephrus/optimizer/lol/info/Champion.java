@@ -1,5 +1,6 @@
 package github.cephrus.optimizer.lol.info;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -10,53 +11,13 @@ public class Champion
 {
 	private static final Map<String, Champion> champByName = new HashMap<String, Champion>();
 	
-	/** I'll fill in the rest later *//*
-	public static final Champion championAatrox = new Champion("Aatrox");
-	public static final Champion championAhri = new Champion("Ahri");
-	public static final Champion championAkali = new Champion("Akali");
-	public static final Champion championAlistar = new Champion("Alistar");
-	public static final Champion championAmumu = new Champion("Amumu");
-	public static final Champion championAnivia = new Champion("Anivia");
-	public static final Champion championAshe = new Champion("Ashe");
-	public static final Champion championAurel = new Champion("AurelionSol");
-	public static final Champion championAzir = new Champion("Azir");
-	public static final Champion championBard = new Champion("Bard");
-	public static final Champion championBlitz = new Champion("Blitzcrank");
-	public static final Champion championBrand = new Champion("Brand");
-	public static final Champion championBraum = new Champion("Braum");
-	public static final Champion championCaitlyn = new Champion("Caitlyn");
-	public static final Champion championCassio = new Champion("Cassiopeia");
-	public static final Champion championChoGath = new Champion("ChoGath");
-	public static final Champion championCorki = new Champion("Corki");
-	public static final Champion championDarius = new Champion("Darius");
-	public static final Champion championDiana = new Champion("Diana");
-	public static final Champion championMundo = new Champion("DrMundo");
-	public static final Champion championDraven = new Champion("Draven");
-	public static final Champion championEkko = new Champion("Ekko");
-	public static final Champion championElise = new Champion("Elise");
-	public static final Champion championEve = new Champion("Evelynn");
-	public static final Champion championEzreal = new Champion("Ezreal");
-	public static final Champion championFiddle = new Champion("Fiddlesticks");
-	public static final Champion championFiora = new Champion("Fiora");
-	public static final Champion championFizz = new Champion("Fizz");
-	public static final Champion championGalio = new Champion("Galio");
-	public static final Champion championGP = new Champion("Gangplank");
-	public static final Champion championGaren = new Champion("Garen");
-	public static final Champion championGnar = new Champion("Gnar");
-	public static final Champion championGragas = new Champion("Gragas");
-	public static final Champion championGraves = new Champion("Graves");
-	public static final Champion championHecarim = new Champion("Hecarim");
-	public static final Champion championHeimer = new Champion("Heimerdinger");
-	public static final Champion championIllaoi = new Champion("Illaoi");
-	public static final Champion championIrelia = new Champion("Irelia");
-	public static final Champion championJanna = new Champion("Janna");*/
-	
 	public static final List<String> tags = Arrays.asList("assassin", "fighter", "tank", "mage", "marksman", "support");
 	
 	public Champion(String name)
 	{
 		this.name = name;
 		champByName.put(name, this);
+		frm = new DecimalFormat("##.00");
 	}
 	
 	public Champion(String name, int id)
@@ -71,6 +32,9 @@ public class Champion
 	public int id;
 	public StatInfo info;
 	public int maxSkins;
+	public String resource;
+	
+	private DecimalFormat frm;
 	
 	public static Champion[] byAlpha()
 	{
@@ -106,7 +70,7 @@ public class Champion
 	public int randomSkin()
 	{
 		Random rand = new Random();
-		return rand.nextInt(maxSkins) + 1;
+		return rand.nextInt(maxSkins);
 	}
 	
 	public Champion setInfo(StatInfo stats)
@@ -118,5 +82,112 @@ public class Champion
 	public static Champion fromName(String championName)
 	{
 		return champByName.get(championName);
+	}
+	
+	@Deprecated
+	public int getIntFromObject(Object o)
+	{
+		if(o instanceof Double) return ((Double)o).intValue();
+		else return ((Integer)o).intValue();
+	}
+	
+	public double getDoubleFromObject(Object o)
+	{
+		if(o instanceof Double) return ((Double)o).doubleValue();
+		else return ((Integer)o).doubleValue();
+	}
+	/**
+	 * http://na.leagueoflegends.com/en/news/game-updates/patch/patch-420-notes#patch-stats-gained-per-level
+	 * http://boards.na.leagueoflegends.com/en/c/gameplay-balance/i1tQmvMX-the-true-growth-stat-formula-you-cant-seem-to-find-anywhere-else
+	 */
+	public String calculateStat(Object statName, Object growthName, String lvl, boolean round)
+	{
+		double stat = getDoubleFromObject(statName), growth = getDoubleFromObject(growthName);
+		
+		if(!lvl.equals("1-18"))
+		{
+			int level = Integer.parseInt(lvl);
+			double statAtL = stat + .65 * growth * (level - 1) + .035 * growth * (1.5 + ((0.5 * level) - 0.5)) * (level-1);
+			return "" + (round ? (int)Math.round(statAtL) : frm.format(statAtL));
+		}
+		else
+		{
+			double statAt18 = stat + .65 * growth * (17) + .035 * growth * (1.5 + ((0.5 * 18) - 0.5)) * (17);
+			if(round) statAt18 = Math.round(statAt18);
+			if(round) stat = Math.round(stat);
+			
+			if(!round) return stat == statAt18 ? frm.format(stat) : frm.format(stat) + "-" + frm.format(statAt18);
+			else return stat == statAt18 ? "" + (int)stat : (int)stat + "-" + (int)statAt18;
+		}
+	}
+	
+	public String getBaseAttackDamage(String lvl)
+	{
+		return this.calculateStat(info.getStat("attackdamage"), info.getStat("attackdamageperlevel"), lvl, true);
+	}
+	
+	public String getRange()
+	{
+		return "" + (int)Math.ceil(getDoubleFromObject(info.getStat("attackrange")));
+	}
+	
+	public String getRegen(String lvl)
+	{
+		return this.calculateStat(info.getStat("hpregen"), info.getStat("hpregenperlevel"), lvl, false);
+	}
+	
+	public String getHealth(String lvl)
+	{
+		return this.calculateStat(info.getStat("hp"), info.getStat("hpperlevel"), lvl, true);
+	}
+
+	public String getResource(String lvl)
+	{	
+		double resource;
+		Object rsc = info.getStat("mp");
+	
+		resource = getDoubleFromObject(rsc);
+	
+		if(resource == 0.0) return "";
+		return this.calculateStat(info.getStat("mp"), info.getStat("mpperlevel"), lvl, true);
+	}
+
+	public String getResourceGen(String lvl)
+	{
+		double resource;
+		Object rsc = info.getStat("mpregen");
+		
+		resource = getDoubleFromObject(rsc);
+		
+		if(resource == 0.0) return "";
+		return this.calculateStat(info.getStat("mpregen"), info.getStat("mpregenperlevel"), lvl, false);
+	}
+	
+	public String getAttackSpeed(String lvl)
+	{
+		double base, perlev;
+		Object as = info.getStat("attackspeedoffset"), pl = info.getStat("attackspeedperlevel");
+		base = 0.625 / (1 + getDoubleFromObject(as));
+		perlev = getDoubleFromObject(pl);
+		
+		int level = lvl.equals("1-18") ? 18 : Integer.parseInt(lvl) ;
+		double bonusAtLevel = .65 * perlev * (level - 1) + .035 * perlev * (1.5 + ((0.5 * level) - 0.5)) * (level-1);
+		return new DecimalFormat("0.000").format(base) + " " + (!lvl.equals("1-18") ? "(+" + Math.round(bonusAtLevel) + "%)" 
+				: "(+0%-" + Math.round(bonusAtLevel) + "%)");
+	}
+	
+	public String getArmor(String lvl)
+	{
+		return this.calculateStat(info.getStat("armor"), info.getStat("armorperlevel"), lvl, true);
+	}
+	
+	public String getMS()
+	{
+		return (int)getDoubleFromObject(info.getStat("movespeed")) + "";
+	}
+	
+	public String getMagicResist(String lvl)
+	{
+		return this.calculateStat(info.getStat("spellblock"), info.getStat("spellblockperlevel"), lvl, true);
 	}
 }

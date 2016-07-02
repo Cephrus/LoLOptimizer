@@ -37,53 +37,11 @@ public class StatInfo
 				Object stat = iterator.next();
 				
 				this.stats.put(name, stat);
-				
-				/*switch(name)
-				{
-				case "basead": baseAd = (int)stat; break;
-				case "totalad": totalAd = (int)stat; break;
-				case "totalap": totalAp = (int)stat; break;
-				case "health": health = (int)stat; break;
-				case "regen": regen = (int)stat; break;
-				case "armor": armor = (int)stat; break;
-				case "armpen": armPen = (int)stat; break;
-				case "magres": magRes = (int)stat; break;
-				case "mrpen": mrPen = (int)stat; break;
-				case "lifesteal": lifeStealOver100 = (int)stat; break;
-				case "cdr": cdrOver100 = (int)stat; break;
-				case "attkspeed": attackSpeed = (double)stat; break;
-				case "critical": critChanceOver100 = (int)stat; break;
-				case "resource": resourceName = (String)stat; break;
-				case "resourceVal": resource = (int)stat; break;
-				case "manaRegen": manaRegen = (int)stat; break;
-				case "spellvamp": spellVampOver100 = (int)stat; break;
-				}*/
 			}
 		}
 	}
 
 	public StatType type;
-	
-	/*public int baseAd;
-	public int totalAd;
-	public int critChanceOver100;
-	public double attackSpeed;
-	public int armPen;
-
-	public int totalAp;
-	public int cdrOver100;
-	public int mrPen;
-	public String resourceName;
-	public int resource;
-	public int manaRegen;
-	public int spellVampOver100;
-	
-	public int health;
-	public int regen;
-	public int armor;
-	public int magRes;
-	
-	public int lifeStealOver100;*/
 	
 	public StatInfo addStat(String name, Object stat)
 	{

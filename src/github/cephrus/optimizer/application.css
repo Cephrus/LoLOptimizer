@@ -16,7 +16,105 @@
 	-fx-background-color: transparent ;
 }
 
+.label {
+	-fx-text-fill : white ;
+}
+
+.tab-pane *.tab-header-background {
+	-fx-opacity : 0 ;
+}
+
+.tab-pane .tab:selected {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+}
+
+.tab {
+	-fx-background-color : rgba(0, 0, 0, 0.1) ;
+}
+
+.tab .tab-label {
+	-fx-text-fill : white ;
+}
+
 #mBlur2 {
 	-fx-background-color : rgba(0, 0, 0, 0.4) ;
 	-fx-background-radius : 10 ;
+}
+
+#mBlurI {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-background-radius : 10 ;
+}
+
+#mBlurQ {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-background-radius : 10 ;
+}
+
+#mBlurW {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-background-radius : 10 ;
+}
+
+#mBlurE {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-background-radius : 10 ;
+}
+
+#mBlurR {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-background-radius : 10 ;
+}
+
+.combo-box {
+	-fx-background-color : rgba(0, 0, 0, 0.2) ;
+}
+
+.combo-box .cell {
+	-fx-text-fill : white ;
+}
+
+.button {
+	-fx-background-color : transparent ;
+	-fx-text-fill : white ;
+}
+
+#mReloadBtn {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+}
+
+#mCISearchBox {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-text-fill : rgb(200, 200, 200) ;
+}
+
+.scroll-pane {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-background-radius : 10 ;
+}
+
+.scroll-pane .viewport {
+	-fx-background-color : transparent ;
+}
+
+.scroll-pane .content {
+	-fx-background-color : transparent ;
+}
+
+.text-area {
+	-fx-background-color : transparent ;
+	-fx-text-fill : white ;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+
+
+.text-area .scroll-pane .content{
+    -fx-background-color: transparent;
 }
