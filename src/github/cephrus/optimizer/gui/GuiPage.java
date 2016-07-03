@@ -39,6 +39,8 @@ public class GuiPage
 	{
 		this.name = pageName;
 		this.panel = page;
+		
+		panel.setVisible(false);
 		mainPages.add(this);
 	}
 }

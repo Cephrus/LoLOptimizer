@@ -1,5 +1,7 @@
 package github.cephrus.optimizer;
 
+import java.util.logging.Logger;
+
 import github.cephrus.optimizer.gui.GuiMain;
 import github.cephrus.optimizer.lol.info.APIHelper;
 import github.cephrus.optimizer.lol.info.Champion;
@@ -23,6 +25,9 @@ public class LoLOptimizer extends Application
 {
 	public static BackgroundImage splash;
 	public static AnchorPane base;
+	
+	public static final String version = "1.0beta";
+	public static final Logger logger = Logger.getLogger("LoLOptimizer");
 	
 	public static void main(String[] args)
 	{

@@ -19,6 +19,8 @@ import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import github.cephrus.optimizer.LoLOptimizer;
+
 @SuppressWarnings("resource")
 public final class APIHelper
 {
@@ -229,7 +231,7 @@ public final class APIHelper
 		}
 		catch(Exception e) {e.printStackTrace();}
 
-		System.out.println("Finished " + index + " of " + Champion.champions().length);
+		LoLOptimizer.logger.info("Finished " + index + " of " + Champion.champions().length);
 	}
 
 	public static void setVersion()
@@ -273,11 +275,35 @@ public final class APIHelper
 		}
 		catch(Exception e) {e.printStackTrace();}
 	}
+	
+	public static boolean checkNewVersion() throws IOException
+	{
+		InputStream stream = new URL("https://cephrus.github.io/optimizerdata/ver").openStream();
+		Scanner scn = new Scanner(stream).useDelimiter("\\A");
+		String ver = scn.next().trim();
+		
+		if(!ver.equals(LoLOptimizer.version))
+			LoLOptimizer.logger.info("There is a new version available. It is a good idea to get it.");
+		
+		return !ver.equals(LoLOptimizer.version);
+	}
 
 	public static void loadLanguage() throws MalformedURLException, IOException
 	{
 		File localization = new File(dataDir + dataMod + File.separator + "lang.json");
-		if(!localization.exists()) return;
+		
+		if(checkNewVersion()) localization.delete();
+		
+		if(!localization.exists())
+		{
+			InputStream streem = new URL("https://cephrus.github.io/optimizerdata/lang.json").openStream();
+			Scanner scn = new Scanner(streem).useDelimiter("\\A");
+			JSONObject o = new JSONObject(scn.next());
+			try(FileWriter f = new FileWriter(localization))
+			{
+				f.write(o.toString());
+			}
+		}
 		
 		InputStream s = localization.toURI().toURL().openStream();
 		Scanner scn = new Scanner(s).useDelimiter("\\A");
@@ -315,7 +341,7 @@ public final class APIHelper
 			
 			if(queueUpdate)
 			{
-				System.out.println("Updating champion data.");
+				LoLOptimizer.logger.info("Updating champion data.");
 				new File(dataDir + dataMod + File.separator + "championids.json").delete();
 				for(File champFile : new File(dataDir + dataMod + File.separator + "champions").listFiles())
 				{

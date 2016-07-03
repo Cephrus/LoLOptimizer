@@ -84,13 +84,6 @@ public class Champion
 		return champByName.get(championName);
 	}
 	
-	@Deprecated
-	public int getIntFromObject(Object o)
-	{
-		if(o instanceof Double) return ((Double)o).intValue();
-		else return ((Integer)o).intValue();
-	}
-	
 	public double getDoubleFromObject(Object o)
 	{
 		if(o instanceof Double) return ((Double)o).doubleValue();

@@ -8,8 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import github.cephrus.optimizer.LoLOptimizer;
 import github.cephrus.optimizer.lol.info.APIHelper;
+import github.cephrus.optimizer.lol.info.Ability;
 import github.cephrus.optimizer.lol.info.Champion;
 import github.cephrus.optimizer.lol.info.SpellHandler;
 import github.cephrus.optimizer.lol.info.StatInfo;
@@ -24,7 +28,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
@@ -38,12 +41,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 
@@ -66,7 +67,7 @@ public class GuiMain implements Initializable
 	private Pane mPaneAbout;
 
 	@FXML
-	private Pane mChampInfo;
+	private Pane mChampInfo, mItemInfoPane;
 	
 	@FXML
 	private Pane mOptimizer;
@@ -93,16 +94,21 @@ public class GuiMain implements Initializable
 	private TextField mCISearchBox;
 	
 	@FXML
-	private Pane mBorder;
+	private Pane mBorder, mBorder1;
 	
 	@FXML
-	private Label mChampName;
+	private Label mChampName, mChampName1;
 	
 	@FXML
 	private ComboBox mCILevel;
 	
 	@FXML
 	private Label mCI1, mCI2, mCI3, mCI4, mCI5, mCI6, mCI7, mCI8, mCI9, mCI0, mCIRes, mCIResGen;
+	
+	@FXML
+	private Label mAbilityName, mAbilityName1, mAbilityName2, mAbilityName3, mAbilityName4,
+				mAbilityCooldown, mAbilityCooldown1, mAbilityCooldown2, mAbilityCooldown3,
+				mAbilityCost, mAbilityCost1, mAbilityCost2, mAbilityCost3;
 	
 	@FXML
 	private AnchorPane mBlurI, mBlurQ, mBlurW, mBlurE, mBlurR;
@@ -115,11 +121,21 @@ public class GuiMain implements Initializable
 	public void setChampInfo(Champion c)
 	{
 		this.mChampName.setText(c.displayName);
-		ImageView img = new ImageView(new Image(APIHelper.getSplash(c, 0)));
+		this.mChampName1.setText(c.displayName);
+		
+		Image imag = new Image(APIHelper.getSplash(c, 0));
+		
+		ImageView img = new ImageView(imag);
 		img.setPreserveRatio(true);
 		img.setFitHeight(240);
 		img.setFitWidth(120);
 		this.mBorder.getChildren().add(img);
+		
+		ImageView img1 = new ImageView(imag);
+		img1.setPreserveRatio(true);
+		img1.setFitHeight(240);
+		img1.setFitWidth(120);
+		this.mBorder1.getChildren().add(img1);
 		
 		StatInfo stats = c.info;
 		String lvl = (String)this.mCILevel.getSelectionModel().getSelectedItem();
@@ -138,68 +154,74 @@ public class GuiMain implements Initializable
 		this.mCI9.setText(c.getMagicResist(lvl));
 		this.mCI0.setText(c.getMS());
 		
-		//TODO passive
+		mWeb.setText(formatAbility(c, -1));
 		mWeb1.setText(formatAbility(c, 0));
 		mWeb2.setText(formatAbility(c, 1));
 		mWeb3.setText(formatAbility(c, 2));
 		mWeb4.setText(formatAbility(c, 3));
 		
+		mAbilityName4.setText(SpellHandler.getPassive(c).name);
+		mAbilityName.setText(SpellHandler.getAbility(c, 0).name);
+		mAbilityName1.setText(SpellHandler.getAbility(c, 1).name);
+		mAbilityName2.setText(SpellHandler.getAbility(c, 2).name);
+		mAbilityName3.setText(SpellHandler.getAbility(c, 3).name);
+		
+		mAbilityCooldown.setText(SpellHandler.getAbility(c, 0).cooldown);
+		mAbilityCooldown1.setText(SpellHandler.getAbility(c, 1).cooldown);
+		mAbilityCooldown2.setText(SpellHandler.getAbility(c, 2).cooldown);
+		mAbilityCooldown3.setText(SpellHandler.getAbility(c, 3).cooldown);
+		
+		mAbilityCost.setText(SpellHandler.getAbility(c, 0).cost);
+		mAbilityCost1.setText(SpellHandler.getAbility(c, 1).cost);
+		mAbilityCost2.setText(SpellHandler.getAbility(c, 2).cost);
+		mAbilityCost3.setText(SpellHandler.getAbility(c, 3).cost);
+		
 		this.selected = c;
-	}
-	
-	public VBox formBeta(Champion c, int i)
-	{
-		VBox v = new VBox();
-		HBox box = new HBox();
-		box.setSpacing(0);
-		String[] description = SpellHandler.getAbility(c, i).description.split("<|\\>");
-		
-		Color paint = Color.WHITE;
-		for(String s : description)
-		{
-			if(s.equals("br"))
-			{
-				HBox imm = box;
-				v.getChildren().add(imm);
-				box = new HBox();
-				box.setSpacing(0);
-			}
-			else if(s.contains("span class=\""))
-			{
-				String q = s.split("\"")[1].substring(5);
-				paint = (Color) Paint.valueOf(q);
-				System.out.println(q);
-				System.out.println(paint.getBlue());
-				System.out.println(paint.getRed());
-				System.out.println(paint.getGreen());
-				System.out.println();
-			}
-			else if(s.equals("/span"))
-			{
-				paint = Color.WHITE;
-			}
-			else
-			{
-				Label l = new Label(s);
-				l.setTextFill(paint == Color.WHITE ? Color.WHITE : Color.BLUE);
-				box.getChildren().add(l);
-			}
-		}
-		
-		return v;
 	}
 	
 	public String formatAbility(Champion champ, int index)
 	{
-		String description = index == -1 ? SpellHandler.getPassive(champ).description : 
-			SpellHandler.getAbility(champ, index).description;
+		Ability ability = index == -1 ? SpellHandler.getPassive(champ) : 
+			SpellHandler.getAbility(champ, index);
 		StringBuilder builder = new StringBuilder();
+		String description = ability.description;
+		
+		JSONObject obj = APIHelper.getJSONFor(champ).getJSONObject("data").getJSONObject(champ.name);
+		JSONObject spell = index == -1 ? null : obj.getJSONArray("spells").getJSONObject(index);
+		if(spell != null)
+		{
+			JSONArray bases = spell.getJSONArray("effectBurn");
+			for(int i = 0; i < bases.length(); i++)
+			{
+				Object base = bases.get(i);
+				if(base instanceof String && base != null) 
+					description = description.replace("{{ e" + i + " }}", (String)base);
+				
+			}
+			
+			if(spell.has("maxammo"))
+				description = description.replace("{{ maxammo }}", "" + spell.getInt("maxammo"));
+			
+			JSONArray scalings = spell.getJSONArray("vars");
+			for(int i = 0; i < scalings.length(); i++)
+			{
+				JSONObject scaling = (JSONObject)scalings.get(i);
+				if(scaling == null) continue;
+				
+				double scl = scaling.getDouble("coeff");
+				String key = scaling.getString("key");
+				String typ = scaling.getString("link");
+				
+				description = description.replace("{{ " + key + " }}", Math.round(scl * 100) + "% " + APIHelper.getLocalization(typ));
+			}
+		}
 		
 		String[] s = description.split("<|\\>");
 		for(String str : s)
 		{
-			if(str.contains("span")) continue;
-			if(str.equals("br")) builder.append("\n");
+			if(str.startsWith("span") || str.startsWith("/span")) continue;
+			else if(str.equals("i") || str.equals("/i")) continue;
+			else if(str.equals("br")) builder.append("\n");
 			else
 			{
 				char[] a = str.toCharArray();
@@ -207,7 +229,7 @@ public class GuiMain implements Initializable
 				for(int i = 0; i < a.length; i++)
 				{
 					counter++;
-					if(counter >= 30 && a[i] == ' ')
+					if(counter >= 50 && a[i] == ' ')
 					{
 						builder.append("\n");
 						counter = 0;
@@ -225,8 +247,12 @@ public class GuiMain implements Initializable
 	{
 		GuiPage pageAbout = new GuiPage("About", mPaneAbout);
 		GuiPage pageInfo = new GuiPage("Champion Information", mChampInfo);
-		GuiPage pageOptimizer = new GuiPage("Item Optimizer", mOptimizer);
+		/** Commented for release, uncomment if you need to work on them */
+	//	GuiPage pageItem = new GuiPage("Item Information", mItemInfoPane);
+	//	GuiPage pageOptimizer = new GuiPage("Build Optimizer", mOptimizer);
 		GuiPage pageSettings = new GuiPage("Settings", mSettings);
+		
+		pageAbout.panel.setVisible(true);
 		
 		DropShadow shad = new DropShadow();
 		shad.setOffsetX(1.8);
