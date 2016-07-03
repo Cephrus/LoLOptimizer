@@ -114,7 +114,7 @@ public class GuiMain implements Initializable
 	private AnchorPane mBlurI, mBlurQ, mBlurW, mBlurE, mBlurR;
 	
 	@FXML
-	private TextArea mWeb, mWeb1, mWeb2, mWeb3, mWeb4;
+	private TextArea mWeb, mWeb1, mWeb2, mWeb3, mWeb4, mInfoBox;
 	
 	private Champion selected;
 
@@ -253,6 +253,13 @@ public class GuiMain implements Initializable
 		GuiPage pageSettings = new GuiPage("Settings", mSettings);
 		
 		pageAbout.panel.setVisible(true);
+		
+		mInfoBox.setText("Build Optimizer isn't endorsed by Riot Games and doesn't \n"
+						+ " reflect the views or opinions of Riot Games or anyone \n"
+						+ " officially involved in producing or managing League of Legends. \n"
+						+ " League of Legends and Riot Games are trademarks or registered \n"
+						+ " trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.\n"
+						+ "Program written by Cephrus. Special thanks to Aqua Dragon");
 		
 		DropShadow shad = new DropShadow();
 		shad.setOffsetX(1.8);

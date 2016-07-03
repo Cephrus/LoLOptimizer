@@ -199,6 +199,7 @@
                   <Tooltip text="Click this if there has been an update to the game to refresh champion data to latest values. The program will be unresponsive during this time." />
                </tooltip>
             </Button>
+            <TextArea fx:id="mInfoBox" editable="false" layoutX="14.0" layoutY="509.0" prefHeight="112.0" prefWidth="395.0" />
          </children>
       </Pane>
    </children>
