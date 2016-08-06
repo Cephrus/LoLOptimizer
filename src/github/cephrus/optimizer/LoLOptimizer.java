@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import github.cephrus.optimizer.gui.GuiMain;
 import github.cephrus.optimizer.lol.info.APIHelper;
 import github.cephrus.optimizer.lol.info.Champion;
+import github.cephrus.optimizer.lol.info.Item;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -25,9 +26,11 @@ public class LoLOptimizer extends Application
 {
 	public static BackgroundImage splash;
 	public static AnchorPane base;
+	public static Stage stage;
 	
 	public static final String version = "1.0beta";
 	public static final Logger logger = Logger.getLogger("LoLOptimizer");
+	public static final boolean debug = true; // set to false for release
 	
 	public static void main(String[] args)
 	{
@@ -38,6 +41,10 @@ public class LoLOptimizer extends Application
 	public void start(Stage primaryStage)
 	{
 		new APIHelper();
+		APIHelper.develCreateBaseItemJson();
+		Item.initialize();
+		
+		stage = primaryStage;
 		
 		try
 		{
@@ -54,6 +61,8 @@ public class LoLOptimizer extends Application
 			
 			Scene scene = new Scene(pane);
 			primaryStage.setTitle("LoL Item Optimizer");
+		//	primaryStage.getIcons().add(new Image(APIHelper.getChampIcon(Champion.fromName("Malzahar"))));
+			primaryStage.getIcons().add(new Image(APIHelper.getOldChampIcon(Champion.fromName("Malzahar"), "5.22.1")));
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.resizableProperty().set(false);

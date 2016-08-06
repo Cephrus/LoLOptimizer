@@ -7,6 +7,15 @@ import org.json.JSONObject;
 
 public final class SpellHandler
 {
+	private static boolean initialized = false;
+	
+	public static boolean initialize()
+	{
+		if(initialized) return false;
+		
+		return true;
+	}
+	
 	public static Ability getAbility(Champion champ, int index)
 	{
 		JSONObject champion = APIHelper.getJSONFor(champ).getJSONObject("data").getJSONObject(champ.name);

@@ -71,12 +71,62 @@
 	-fx-background-radius : 10 ;
 }
 
+#mRPBlur {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-background-radius : 10 ;
+}
+
+#mRPBlur2 {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-background-radius : 10 ;
+}
+
+#mUVBlur {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-background-radius : 10 ;
+}
+
+#mRPNewProjectPane {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-background-radius : 10 ;
+}
+
+#mRPNewProject {
+	-fx-background-color : rgba(127, 127, 127, 0.4) ;
+}
+
+#mRPOpenProject {
+	-fx-background-color : rgba(127, 127, 127, 0.4) ;
+}
+
+#mIIInfoPane {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-background-radius : 10 ;
+}
+
+#mIIBuildPane {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-background-radius : 10 ;
+}
+
 .combo-box {
 	-fx-background-color : rgba(0, 0, 0, 0.2) ;
 }
 
 .combo-box .cell {
 	-fx-text-fill : white ;
+}
+
+#mCILevel .list-view {
+	-fx-background-color : rgba(0, 0, 0, 0.6) ;
+}
+
+#mItemMapSelector .list-view {
+	-fx-background-color : rgba(0, 0, 0, 0.6) ;
+}
+
+#mRPNPChampion .list-view {
+	-fx-background-color : rgba(0, 0, 0, 0.6) ;
 }
 
 .button {
@@ -91,6 +141,29 @@
 #mCISearchBox {
 	-fx-background-color : rgba(0, 0, 0, 0.4) ;
 	-fx-text-fill : rgb(200, 200, 200) ;
+}
+
+#mIISearchBox {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-text-fill : rgb(200, 200, 200) ;
+}
+
+#mRPNPName {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-text-fill : rgb(200, 200, 200) ;
+}
+
+#mRPNPSaveDir {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+	-fx-text-fill : rgb(200, 200, 200) ;
+}
+
+#mRPNPSaveChoose {
+	-fx-background-color : rgba(0, 0, 0, 0.4) ;
+}
+
+#mRPNPCreate {
+	-fx-background-color : rgba(127, 127, 127, 0.4) ;
 }
 
 .scroll-pane {
